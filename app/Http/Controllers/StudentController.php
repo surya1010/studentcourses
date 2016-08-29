@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Student;
+use App\KoneksiCourse;
+use App\Course;
 
 use Session;
 
@@ -20,15 +22,14 @@ class StudentController extends Controller
     {
         //
         if(isset($_GET['status'])){
-            $students = Student::with('course')
-                                    ->where('active', $_GET['status'])
+            $students = Student::with('konekCourse')->where('active', $_GET['status'])
                                     ->orderBy('id','desc')
                                     ->get();
             
         }else{
-            $students = Student::with('course')
-                                ->orderBy('id','desc')
+            $students = Student::with('konekCourse')->orderBy('id','desc')
                                 ->get();
+            //$koneksi = KoneksiCourse::where('student_id', $students->id);
         }
         return view('students.index')->with(compact('students'));
     }
@@ -41,7 +42,8 @@ class StudentController extends Controller
     public function create()
     {
         //
-        return view('students.create');
+        $course = Course::orderBy('id', 'desc')->get();
+        return view('students.create')->with(compact('course'));
     }
 
     /**
@@ -57,7 +59,7 @@ class StudentController extends Controller
                 'name' => 'required',
                 'password' => 'required|min:6',
                 'gender' => 'required',
-                'active' => 'required',
+                //'active' => 'required',
                 'email' => 'required|email|max:255|unique:students',
 
             ]);
@@ -68,8 +70,26 @@ class StudentController extends Controller
         $student->email = $request->email;
         $student->password = bcrypt($request->password);
         $student->gender = $request->gender;
-        $student->active = $request->active;
-        $student->save();
+        $student->active = 'T';
+        //$student->course_id = 1;
+       // $student->save();
+
+        if($student->save())
+        {
+            $studentlastID = $student->id;
+
+            $jumlah = count($request->course_id);
+            for ($i=0; $i < $jumlah; $i++) { 
+                $course_idX = $request->course_id[$i];
+
+                $newCOurse = new KoneksiCourse();
+                $newCOurse->course_id = $course_idX;
+                $newCOurse->student_id = $studentlastID;
+                $newCOurse->save();
+            }
+
+
+        }
 
         Session::flash("flash_notification", [
                 "level" => "success",
@@ -100,9 +120,10 @@ class StudentController extends Controller
     public function edit($id)
     {
         //
-        $student = Student::find($id);
+        $course = Course::orderBy('id', 'desc')->get();
+        $student = Student::with('konekCourse')->find($id);
 
-        return view('students.edit')->with(compact('student'));
+        return view('students.edit')->with(compact('student', 'course'));
     }
 
     /**
@@ -117,23 +138,68 @@ class StudentController extends Controller
         $this->validate($request, [
                 'name' => 'required',
                 'gender' => 'required',
-                'active' => 'required',
+                //'active' => 'required',
                 'email' => 'required|email|max:255',
 
             ]);
+        if(isset($request))
+        {
 
-        $student = Student::find($id);
-        if(!$request->input('password')){
-            $password = $student->password;
-        }else{
-            $password = bcrypt($request->input('password'));
+
+            $student = Student::find($id);
+            //dd($student->id);
+            if(!$request->input('password')){
+                $password = $student->password;
+            }else{
+                $password = bcrypt($request->input('password'));
+            }
+            $student->name = $request->input('name');
+            $student->email = $request->input('email');
+            $student->password = $password;
+            $student->gender = $request->input('gender');
+            $student->active = 'T';
+            $student->save();
+
+
+
+                //Cek student_id apa ada dikoneksi
+                $cekIDstudent = KoneksiCourse::where('student_id',  $student->id)->first();
+                if($cekIDstudent){
+
+                    $deletekoneksi = KoneksiCourse::where('student_id',  $student->id);
+                    //dd($deletekoneksi);
+
+                    if($deletekoneksi->delete())
+                    {
+                        $jumlah = count($request->course_id);
+                            for ($i=0; $i < $jumlah; $i++) { 
+                                $course_idX = $request->course_id[$i];
+
+                                $newCOurse = new KoneksiCourse();
+                                $newCOurse->course_id = $course_idX;
+                                $newCOurse->student_id = $student->id;
+                                $newCOurse->save();
+                            }
+                    }
+
+                }else{
+                    //Kalo student_id ga ada dikoneksi
+                        $jumlah = count($request->course_id);
+                            for ($i=0; $i < $jumlah; $i++) { 
+                                $course_idX = $request->course_id[$i];
+
+                                $newCOurse = new KoneksiCourse();
+                                $newCOurse->course_id = $course_idX;
+                                $newCOurse->student_id = $student->id;
+                                $newCOurse->save();
+                            }
+                }
+
+                
+            
+        
+
         }
-        $student->name = $request->input('name');
-        $student->email = $request->input('email');
-        $student->password = $password;
-        $student->gender = $request->input('gender');
-        $student->active = $request->input('active');
-        $student->save();
 
         Session::flash("flash_notification", [
                 "level" => "success",
@@ -152,6 +218,8 @@ class StudentController extends Controller
     {
         //
         Student::destroy($id);
+        KoneksiCourse::destroy($id);
+        //$deletekoneksi->delete()
         //$student->delete();
         Session::flash("flash_notification" , [
         "level" => "success" ,
@@ -159,4 +227,6 @@ class StudentController extends Controller
         ]);
         return redirect()->route('students.index');
     }
+
+    
 }

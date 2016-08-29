@@ -17,6 +17,7 @@
                 <p>
                     <a class="btn btn-primary" href="{{ url('/courses/create') }}">Tambah</a>
                 </p>
+                
                     <table class="table table-bordered table-stripped">
                         <thead>
                             <th>No</th>

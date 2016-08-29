@@ -19,5 +19,10 @@ class Course extends Model
         return $this->hasMany('App\Student');
     }
 
+    public function konekCourse()
+    {
+        return $this->hasMany('App\KoneksiCourse');
+    }
+
     
 }

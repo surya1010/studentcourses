@@ -15,4 +15,8 @@ class Student extends Model
     {
         return $this->belongsTo('App\Course');
     }
+    public function konekCourse()
+    {
+        return $this->hasMany('App\KoneksiCourse');
+    }
 }

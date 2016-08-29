@@ -5,11 +5,17 @@
         {!! $errors->first('name', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
-<?php /*
-dd($student);
-exit();*/
-?>
+<?php 
 
+
+$dataID = array();
+foreach ($student->konekCourse as $key => $value) {
+    $dataID[] = $value->course_id  ;
+
+}
+// dd($dataAll);
+// exit();
+?>
 <div class="form-group">
     {{ Form::label('email', 'Email',['class' => 'col-md-2 control-label']) }}
     <div class="col-md-4">
@@ -47,6 +53,25 @@ exit();*/
 </div>
 
 <div class="form-group">
+    {{ Form::label('course' , 'Course', ['class' => 'col-md-2 control-label']) }}
+    <div class="col-md-4">
+
+
+            
+
+            @foreach($course as $cr)
+                
+            {!! Form::checkbox('course_id[]', $cr->id, in_array($cr->id, $dataID) , array('id'=>$cr->name)) !!}
+            {{ Form::label($cr->name, $cr->name)}} <br>
+
+            @endforeach
+            
+    </div>
+</div>
+
+
+
+<!-- <div class="form-group">
     {{ Form::label('active', 'Active',['class' => 'col-md-2 control-label']) }}
     <div class="col-md-4">
         {!! Form::select('active', array('Y' => 'Yes', 'T' => 'No'), null, ['class' => 'form-control']) !!}
@@ -55,9 +80,9 @@ exit();*/
          <small> {{ $errors->first('active') }} </small>
         @endif
     </div>
-</div>
+</div> -->
 
-<input type="hidden" name="userID" value="{{ Auth::user()->id }}">
+
 
 <div class="form-group">
   <div class="col-md-4 col-md-offset-2">

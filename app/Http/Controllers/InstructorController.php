@@ -20,7 +20,7 @@ class InstructorController extends Controller
     {
         //
         if(isset($_GET['gender'])){
-            $instructors = Instructor::where('gender', $_GET['gender'])->orderBy('id','desc')->get();
+            $instructors = Instructor::where('gender', '=', $_GET['gender'])->orderBy('id','desc')->get();
             
         }else{
             $instructors = Instructor::orderBy('id','desc')->get();

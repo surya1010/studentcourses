@@ -30,6 +30,7 @@
                 </div>
                 <div class="clearfix"></div>
                 <p></p>
+                
                     <table class="table table-bordered table-stripped">
                         <thead>
                             <th>No</th>
@@ -47,7 +48,16 @@
                                 <td>{{ $std->name }} </td>
                                 <td>{{ $std->email }}</td>
                                 <td>{{ $std->gender }}</td>
-                                <td>{{ $std->course->name }}</td>
+                                <td>
+                                        @if($std->konekCourse->count() > 0)
+                                            <ul>
+                                            @foreach($std->konekCourse as $crs)
+                                                <li>{{ $crs->course->name }}</li>
+                                            @endforeach
+                                            </ul>
+                                        @endif
+                                    
+                                </td>
                                 <td>{{ $std->active }}</td>
                                 <td>
                                     <a class="btn btn-info" href="{{ url('students/'.$std->id.'/edit') }}">Edit</a>

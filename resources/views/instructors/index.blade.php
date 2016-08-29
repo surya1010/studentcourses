@@ -41,6 +41,7 @@
                         </thead>
                         <tbody>
                         @foreach($instructors as $std)
+                        
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $std->name }} </td>
