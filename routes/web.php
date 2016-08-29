@@ -22,7 +22,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('instructors', 'InstructorController');
     Route::resource('payments', 'PaymentController');
     Route::resource('courses', 'CourseController');
-    //Route::get('instructors/{gender}', ['as' => 'gender', 'uses' => 'InstructorController@index']);
+   
 });
 
 
