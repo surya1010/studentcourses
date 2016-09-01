@@ -6,12 +6,13 @@
     </div>
 </div>
 <?php 
-
+if(isset($student)){
 
 $dataID = array();
 foreach ($student->konekCourse as $key => $value) {
     $dataID[] = $value->course_id  ;
 
+}
 }
 // dd($dataAll);
 // exit();
@@ -60,9 +61,14 @@ foreach ($student->konekCourse as $key => $value) {
             
 
             @foreach($course as $cr)
-                
-            {!! Form::checkbox('course_id[]', $cr->id, in_array($cr->id, $dataID) , array('id'=>$cr->name)) !!}
-            {{ Form::label($cr->name, $cr->name)}} <br>
+
+            @if(isset($student))
+                {!! Form::checkbox('course_id[]', $cr->id, in_array($cr->id, $dataID) , array('id'=>$cr->name)) !!}
+                {{ Form::label($cr->name, $cr->name)}} <br>
+            @else
+                {!! Form::checkbox('course_id[]', $cr->id, null , array('id'=>$cr->name)) !!}
+                {{ Form::label($cr->name, $cr->name)}} <br>
+            @endif
 
             @endforeach
             
