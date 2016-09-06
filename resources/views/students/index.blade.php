@@ -16,7 +16,15 @@
                 <p>
                     <a class="btn btn-primary" href="{{ url('/students/create') }}">Tambah</a>
                 </p>
+
+                @if(isset($_GET['status']) && $_GET['status']!=="")
+                <div class="pull-left">
+                    <a class="btn btn-success" href="{{ url('/students') }}">Reset</a>
+                </div>
+                @endif
+                
                 <div class="pull-right">
+                
                  <!--OPEN FORM-->
                {!! Form::open(array('url' => 'students/', 'method'=>'GET', 'class' => 'form-inline')) !!}
 
@@ -24,7 +32,7 @@
 
 
                 {{Form::submit('Cari', array('class' => 'btn btn-info')) }}
-
+                
                {!! Form::close() !!}
                <!--close form-->
                 </div>

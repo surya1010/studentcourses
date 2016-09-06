@@ -29,6 +29,7 @@ class StudentController extends Controller
         }else{
             $students = Student::with('konekCourse')->orderBy('id','desc')
                                 ->get();
+            
             //$koneksi = KoneksiCourse::where('student_id', $students->id);
         }
         return view('students.index')->with(compact('students'));
